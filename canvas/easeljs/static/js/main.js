@@ -101,11 +101,7 @@ $(function() {
 			if (bitmap2.x + bitmap2Bounds.width < stage.canvas.width && bitmap.x > 50) {
 				bitmap2.x += stepSize * 1.15;
 			} else {
-				domEl.setTransform(null, null, 1.2, 1.2);
-				domEl.htmlElement.width = bitmap2Bounds.width;
-				domEl.htmlElement.height = bitmap2Bounds.height;
 				domEl.htmlElement.src = bitmap2.cacheCanvas.toDataURL();
-
 				stage.removeChild(bitmap2);
 
 				tween.removeAllTweens();
@@ -123,7 +119,10 @@ $(function() {
 				$(domEl.htmlElement)
 					.css({
 						top: bitmap2.y - 17,
-						left: bitmap2.x - 15
+						left: bitmap2.x - 15,
+						width: bitmap2Bounds.width,
+						height: bitmap2Bounds.height,
+						scale: 1.2
 					})
 					.transit({
 						perspective: '100px',
