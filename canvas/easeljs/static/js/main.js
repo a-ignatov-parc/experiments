@@ -26,6 +26,7 @@ $(function() {
 		var currentFps = normalFPS,
 			tween = createjs.Tween,
 			sound = createjs.Sound.createInstance('slowmo'),
+			domEl = new createjs.DOMElement('card'),
 			bg = new createjs.Bitmap(event.currentTarget.getItem('bg').tag),
 			bitmap = new createjs.Bitmap(event.currentTarget.getItem('logo').tag),
 			bitmap2 = bitmap.clone(),
@@ -62,7 +63,9 @@ $(function() {
 				alpha: 1
 			}, 50);
 
-		stage.addChild(bg, bitmap, bitmap2);
+		stage.addChild(bg, bitmap, bitmap2, domEl);
+
+		console.log(123, bitmap, bitmap2, bitmap2.cacheCanvas.toDataURL(), domEl.htmlElement);
 
 		createjs.Ticker.setFPS(currentFps);
 		createjs.Ticker.addEventListener('tick', function() {
@@ -98,6 +101,13 @@ $(function() {
 			if (bitmap2.x + bitmap2Bounds.width < stage.canvas.width && bitmap.x > 50) {
 				bitmap2.x += stepSize * 1.15;
 			} else {
+				domEl.setTransform(null, null, 1.2, 1.2);
+				domEl.htmlElement.width = bitmap2Bounds.width;
+				domEl.htmlElement.height = bitmap2Bounds.height;
+				domEl.htmlElement.src = bitmap2.cacheCanvas.toDataURL();
+
+				stage.removeChild(bitmap2);
+
 				tween.removeAllTweens();
 				tween
 					.get(bitmap, {
@@ -108,6 +118,18 @@ $(function() {
 						alpha: 1
 					}, 50);
 				flag = true;
+				stage.update();
+
+				$(domEl.htmlElement)
+					.css({
+						top: bitmap2.y - 17,
+						left: bitmap2.x - 15
+					})
+					.transit({
+						perspective: '100px',
+						rotate3d: '1,1,0,180deg'
+					});
+				return;
 			}
 			stage.update();
 		});
