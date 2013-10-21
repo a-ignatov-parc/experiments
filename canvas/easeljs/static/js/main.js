@@ -1,6 +1,9 @@
 $(function() {
 	//Create a stage by getting a reference to the canvas
-	var queue = new createjs.LoadQueue(true),
+	var normalFPS = 120,
+		slowmoFPS = 30,
+		stepSize = 2,
+		queue = new createjs.LoadQueue(true),
 		stage = new createjs.Stage('canvas_id'),
 		loadingText = 'Загрузка ресурсов',
 		text = new createjs.Text(loadingText + '...', '14px PT Sans', '#000'),
@@ -20,7 +23,7 @@ $(function() {
 	});
 
 	queue.addEventListener('complete', function(event) {
-		var currentFps = 360,
+		var currentFps = normalFPS,
 			tween = createjs.Tween,
 			sound = createjs.Sound.createInstance('slowmo'),
 			bg = new createjs.Bitmap(event.currentTarget.getItem('bg').tag),
@@ -68,23 +71,32 @@ $(function() {
 
 			if (bitmap.x + bitmapBounds.width < stage.canvas.width && !flag) {
 				// bitmap.setTransform(bitmap.x + 1, bitmap.y, null, null, bitmap.x + 1, null, null, bitmapBounds.width / 2, bitmapBounds.height / 2);
-				bitmap.x += 1;
+				bitmap.x += stepSize;
 			}
 
-			if (bitmap2.x + (bitmap2Bounds.width / 2) > stage.canvas.width * 2 / 3) {
-				if (currentFps != 360) {
-					createjs.Ticker.setFPS(currentFps = 360);
+			if (bitmap2.x + (bitmap2Bounds.width / 2) > stage.canvas.width * 4 / 7) {
+				if (currentFps != normalFPS) {
+					currentFps = normalFPS;
+					sound.resume();
+
+					setTimeout(function() {
+						createjs.Ticker.setFPS(normalFPS);
+					}, 1500);
 				}
 
 			} else if (bitmap2.x + (bitmap2Bounds.width / 2) > stage.canvas.width / 3) {
-				if (currentFps != 60) {
-					createjs.Ticker.setFPS(currentFps = 60);
+				if (currentFps != slowmoFPS) {
+					createjs.Ticker.setFPS(currentFps = slowmoFPS);
 					sound.play();
+
+					setTimeout(function() {
+						sound.pause();
+					}, 3000);
 				}
 			}
 
 			if (bitmap2.x + bitmap2Bounds.width < stage.canvas.width && bitmap.x > 50) {
-				bitmap2.x += 1.15;
+				bitmap2.x += stepSize * 1.15;
 			} else {
 				tween.removeAllTweens();
 				tween
