@@ -1,6 +1,6 @@
 // Tag constructor based on strings.
 // Example can be seen here: http://jsfiddle.net/ant_Ti/B35ub/
-var Tag = function(tag, params) {
+var Tag = function(tag, params, serialize) {
 	params || (params = {});
 	this._tag = tag || 'div';
 	this._attributes = params.attributes || {};
@@ -8,6 +8,10 @@ var Tag = function(tag, params) {
 
 	if (params.html) {
 		this._children.push(params.html);
+	}
+
+	if (serialize) {
+		return this._serialize();
 	}
 }
 
