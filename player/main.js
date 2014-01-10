@@ -23,16 +23,22 @@ var video = document.getElementById('video'),
 					video.removeEventListener('seeked', currentHandler, false);
 				} else {
 					precacheVideo();
-					// requestAnimationFrame(precacheVideo);
-					// setTimeout(precacheVideo, stepms);
 				}
 			};
 
 		return function() {
-			if (!video.currentTime) {
-				video.addEventListener('seeked', handler, false);
+			// Opera – офца не может нормально работать с событием `seeked`.
+			if (window.opera) {
+				if (!video.currentTime) {
+					video.play();
+				}
+				setTimeout(handler, stepms);
+			} else {
+				if (!video.currentTime) {
+					video.addEventListener('seeked', handler, false);
+				}
+				video.currentTime += step;
 			}
-			video.currentTime += step;
 		};
 	})(),
 	playWithBezier = false,
