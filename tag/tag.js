@@ -62,16 +62,28 @@ Tag.prototype = {
 		return null;
 	},
 	prepend: function(tag) {
-		if (this._find(tag) == null) {
-			this._children.unshift(tag);
-			tag._parent.push(this);
+		if (arguments.length > 1) {
+			for (var i = 0, length = arguments.length; i < length; i++) {
+				this.prepend(arguments[i]);
+			}
+		} else {
+			if (this._find(tag) == null) {
+				this._children.unshift(tag);
+				tag._parent.push(this);
+			}
 		}
 		return this;
 	},
 	append: function(tag) {
-		if (this._find(tag) == null) {
-			this._children.push(tag);
-			tag._parent.push(this);
+		if (arguments.length > 1) {
+			for (var i = 0, length = arguments.length; i < length; i++) {
+				this.prepend(arguments[i]);
+			}
+		} else {
+			if (this._find(tag) == null) {
+				this._children.push(tag);
+				tag._parent.push(this);
+			}
 		}
 		return this;
 	},
