@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>video demo</title>
+	</head>
+	<body>
+		<video width="620" height="310" id="video">
+			<source src="video.webm" type="video/webm">
+			<source src="video.mp4" type="video/mp4">
+		</video>
+		<canvas id="canvas"></canvas>
+		<div>
+			<button id="forward">Forward</button>
+			<button id="backward">Backward</button>
+		</div>
+		<div>
+			<label>
+				<input type="checkbox" id="bezier" />
+				Play with variable playback rate
+			</label>
+		</div>
+		<script src="main.js"></script>
+	</body>
+</html>
