@@ -5,7 +5,7 @@ var Tag = function(tag, params, serialize) {
 	this._tag = tag || 'div';
 	this._attributes = params.attributes || {};
 	this._children = [];
-	this._parent = [];
+	this._parent = null;
 
 	if (params.html) {
 		this._children.push(params.html);
@@ -63,7 +63,7 @@ Tag.prototype = {
 	},
 	prepend: function(tag) {
 		if (arguments.length > 1) {
-			for (var i = 0, length = arguments.length; i < length; i++) {
+			for (var i = arguments.length; i >= 0; i--) {
 				this.prepend(arguments[i]);
 			}
 		} else {
@@ -71,7 +71,7 @@ Tag.prototype = {
 				this._children.unshift(tag);
 
 				if (tag instanceof this.constructor) {
-					tag._parent.push(this);
+					tag._parent = this;
 				}
 			}
 		}
@@ -80,14 +80,14 @@ Tag.prototype = {
 	append: function(tag) {
 		if (arguments.length > 1) {
 			for (var i = 0, length = arguments.length; i < length; i++) {
-				this.prepend(arguments[i]);
+				this.append(arguments[i]);
 			}
 		} else {
 			if (this._find(tag) == null) {
 				this._children.push(tag);
 
 				if (tag instanceof this.constructor) {
-					tag._parent.push(this);
+					tag._parent = this;
 				}
 			}
 		}
@@ -104,26 +104,14 @@ Tag.prototype = {
 	},
 	remove: function(tag) {
 		if (tag != null) {
-			var index = this._find(tag),
-				tagParentIndex;
+			var index = this._find(tag);
 
 			if (index != null) {
 				this._children.splice(index, 1);
-				for (var i = 0, length = tag._parent.length; i < length; i++) {
-					if (tag._parent[i] === this) {
-						tagParentIndex = i;
-						break;
-					}
-
-					if (tagParentIndex != null) {
-						tag._parent.splice(tagParentIndex, 1);
-					}
-				};
+				tag._parent = null;
 			}
-		} else {
-			for (var i = 0, length = this._parent.length; i < length; i++) {
-				this._parent[i].remove(this);
-			};
+		} else if (this._parent) {
+			this._parent.remove(this);
 		}
 		return this;
 	},
