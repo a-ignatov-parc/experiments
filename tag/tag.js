@@ -69,7 +69,10 @@ Tag.prototype = {
 		} else {
 			if (this._find(tag) == null) {
 				this._children.unshift(tag);
-				tag._parent.push(this);
+
+				if (tag instanceof this.constructor) {
+					tag._parent.push(this);
+				}
 			}
 		}
 		return this;
@@ -82,7 +85,10 @@ Tag.prototype = {
 		} else {
 			if (this._find(tag) == null) {
 				this._children.push(tag);
-				tag._parent.push(this);
+
+				if (tag instanceof this.constructor) {
+					tag._parent.push(this);
+				}
 			}
 		}
 		return this;
