@@ -4,23 +4,42 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 		<title>video demo</title>
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script src="js/sections.js"></script>
+		<script src="js/section.js"></script>
 	</head>
 	<body>
-		<video width="620" height="310" id="video">
-			<source src="video.webm" type="video/webm">
-			<source src="video.mp4" type="video/mp4">
-		</video>
-		<canvas id="canvas"></canvas>
-		<div>
-			<button id="forward">Forward</button>
-			<button id="backward">Backward</button>
+		<!--video width="620" height="310" id="video">
+			<source src="videos/video.webm" type="video/webm">
+			<source src="videos/video.mp4" type="video/mp4">
+		</video-->
+		<div class="bVideoContainer">
+			<video width="640" height="360" id="video">
+				<source src="videos/video.mp4" type="video/mp4" />
+				<source src="videos/video.webm" type="video/webm" />
+			</video>
 		</div>
 		<div>
+			<button id="play">Play</button>
+			<button id="pause" disabled>Pause</button>
 			<label>
-				<input type="checkbox" id="bezier" />
-				Play with variable playback rate
+				seeking:
+				<input id="seeking" type="text" disabled value="0" />
 			</label>
 		</div>
-		<script src="main.js"></script>
+		<div>
+			<h3>Sections</h3>
+			<ol>
+				<li>
+					<input name="sections" type="radio" value="0" disabled />
+					<button id="attack" disabled>Attack!</button>
+				</li>
+				<li>
+					<input name="sections" type="radio" value="1" disabled />
+					<input id="range" type="range" min="0" max="100" value="0" step="1" disabled />
+				</li>
+			</ol>
+		</div>
+		<script src="js/main.js"></script>
 	</body>
 </html>
