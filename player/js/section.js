@@ -7,6 +7,7 @@ var Section = function(id, source, options, parent) {
 	this._cached = false;
 	this._currentTimeline = null;
 	this._skipCachedCanvasFreeze = false;
+	this._streamed = false;
 	this._canvas;
 	this._context;
 	this._timer;
@@ -121,6 +122,7 @@ Section.prototype = {
 		if (this.active) {
 			this.active = false;
 			this.hide();
+			this._streamed = false;
 
 			if (typeof this._options.onDeactivate === 'function') {
 				this._options.onDeactivate(this);
@@ -130,7 +132,6 @@ Section.prototype = {
 
 	complete: function() {
 		if (this.active) {
-			this._source.currentTime = this.end;
 			this.deactivate();
 			this._source.play();
 		}
@@ -159,22 +160,24 @@ Section.prototype = {
 	streamToCache: function() {
 		var _this = this;
 
-		if (!this._cached) {
-			this.cacheFrame();
+		if (this._streamed) {
+			this.play(function(timeline) {
+				return timeline.reverse();
+			});
+		} else {
+			if (!this._cached) {
+				this.cacheFrame();
+			}
 
 			if (this._source.currentTime + this._parent._step > this.end) {
 				this._source.pause();
 				this._cached = true;
+				this._streamed = true;
 				console.log('video is cached!');
-
-				this.play(function(timeline) {
-					return timeline.reverse();
-				});
-			} else {
-				setTimeout(function() {
-					_this.streamToCache();
-				}, this._parent._stepms);
 			}
+			setTimeout(function() {
+				_this.streamToCache();
+			}, this._parent._stepms);
 		}
 	},
 

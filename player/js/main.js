@@ -66,6 +66,7 @@ sectionsMap.add({
 		}
 		play.disabled = true;
 		pause.disabled = true;
+		range.value = 0;
 		currentSection = section;
 	},
 	onDeactivate: function(section) {
