@@ -161,22 +161,16 @@ Section.prototype = {
 
 	streamToCache: function() {
 		if (this._streamed) {
-			switch(typeof this._options.onStreamed) {
-				case 'function':
-					this._options.onStreamed(this);
-					break;
-				case 'boolean':
-					if (!this._options.onStreamed) {
-						break;
-					}
-				default:
-					this.play(function(timeline) {
-						return timeline.reverse();
-					});
+			if (typeof this._options.onStreamEnd === 'function') {
+				this._options.onStreamEnd(this);
 			}
 		} else {
 			if (!this._cached) {
 				this.cacheFrame();
+			}
+
+			if (this._timeline.length === 1 && typeof this._options.onStreamStart === 'function') {
+				this._options.onStreamStart(this);
 			}
 
 			if (this._source.currentTime + this._timer._step > this.end) {

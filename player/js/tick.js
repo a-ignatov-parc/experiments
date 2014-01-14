@@ -1,5 +1,5 @@
 var Tick = function(fps) {
-	this._fps = fps || 40;
+	this._fps = fps || 30;
 	this._stepms = 1000 / this._fps;
 	this._step = this._stepms / 1000;
 	this._handlers = [];

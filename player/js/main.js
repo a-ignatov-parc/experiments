@@ -36,11 +36,12 @@ function selectSection(id) {
 
 sectionsMap.add({
 	time: [2.25, 3.6],
-	// onStreamed: false,
+	onStreamStart: function(section) {
+		section.setCurrentProgress(0);
+	},
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
-		// section.setCurrentProgress(0);
 		selectSection(section.id);
 
 		play.disabled = true;
@@ -62,7 +63,6 @@ sectionsMap.add({
 	}
 }, {
 	time: 4.4,
-	onStreamed: false,
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
@@ -85,6 +85,11 @@ sectionsMap.add({
 	}
 }, {
 	time: [9.5, 14.5],
+	onStreamEnd: function(section) {
+		section.play(function(timeline) {
+			return timeline.reverse();
+		});
+	},
 	onTimeupdate: function(sectionMovie) {
 		var percentage = Math.floor((sectionMovie.currentTime / sectionMovie.duration) * 100);
 
