@@ -2,42 +2,52 @@ var Sections = function(source, options) {
 	this._source = source;
 	this._sections = [];
 	this._options = options;
-	this._stepms = 1000 / this._options.fps;
-	this._step = this._stepms / 1000;
+	this._canvas;
+	this._context;
+	this._timer = new Tick();
+
+	this.fps = this._options.fps;
+
 	this.init();
 
-	console.log('sections stepms', this._step);
+	console.log('sections stepms', this._timer._step);
 };
 
 Sections.prototype = {
 	constructor: Sections,
 
+	_streamVideo: function() {
+		this._context.drawImage(this._source, 0, 0, this._canvas.width, this._canvas.height);
+
+		if (typeof this._options.onTimeupdate === 'function') {
+			this._options.onTimeupdate(this._source);
+		}
+		this.check();
+	},
+
 	init: function() {
 		var _this = this,
 			video = this._source,
-			stepms = this._stepms,
-			options = this._options,
-			seekingTimer;
+			options = this._options;
 
 		video.addEventListener('playing', function() {
 			if (typeof options.onPlay === 'function' && !_this.findActive()) {
 				options.onPlay(video);
 			}
-			seekingTimer = setTimeout(function timer() {
-				if (typeof options.onTimeupdate === 'function') {
-					options.onTimeupdate(video);
-				}
-				_this.check();
-				seekingTimer = setTimeout(timer, stepms);
-			}, stepms);
+			_this._timer.bind(_this._streamVideo, _this);
 		}, false);
 
 		video.addEventListener('pause', function() {
 			if (typeof options.onPause === 'function' && !_this.findActive()) {
 				options.onPause(video);
 			}
-			seekingTimer && clearTimeout(seekingTimer);
+			_this._timer.unbind(_this._streamVideo, _this);
 		}, false);
+
+		this._canvas = document.createElement('canvas');
+		this._canvas.width = this._source.width;
+		this._canvas.height = this._source.height;
+		this._context = this._canvas.getContext('2d');
 	},
 
 	add: function(options) {

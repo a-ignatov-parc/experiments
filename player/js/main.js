@@ -9,6 +9,7 @@ var video = document.getElementById('video'),
 	sectionsMap = new Sections(video, {
 		fps: 30,
 		onPlay: function() {
+			loading.style.display = 'none';
 			play.disabled = true;
 			pause.disabled = false;
 		},
@@ -34,12 +35,12 @@ function selectSection(id) {
 }
 
 sectionsMap.add({
-	time: [2.25, 3.7],
-	onStreamed: false,
+	time: [2.25, 3.6],
+	// onStreamed: false,
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
-		section.setCurrentProgress(0);
+		// section.setCurrentProgress(0);
 		selectSection(section.id);
 
 		play.disabled = true;
@@ -115,7 +116,6 @@ sectionsMap.add({
 video.addEventListener('progress', function() {
 	if (!videoIsLoaded && video.buffered.length === 1) {
 		videoIsLoaded = true;
-		loading.style.display = 'none';
 		video.play();
 	}
 });

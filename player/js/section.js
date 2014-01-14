@@ -1,5 +1,6 @@
 var Section = function(id, source, options, parent) {
 	this._parent = parent;
+	this._timer = this._parent._timer;
 	this._source = source;
 	this._options = options;
 	this._timeline = [];
@@ -10,8 +11,8 @@ var Section = function(id, source, options, parent) {
 	this._streamed = false;
 	this._canvas;
 	this._context;
-	this._timer;
 	this._eventHandlerLink;
+	this._playbackTimer;
 
 	this.id = id || 0;
 	this.active = false;
@@ -34,7 +35,7 @@ Section.prototype = {
 		var _this = this,
 			currentTime;
 
-		this._timer && clearTimeout(this._timer);
+		this._playbackTimer && clearTimeout(this._playbackTimer);
 
 		if (frame) {
 			this.playing = false;
@@ -67,9 +68,9 @@ Section.prototype = {
 		}
 
 		if (this.playing) {
-			this._timer = setTimeout(function() {
+			this._playbackTimer = setTimeout(function() {
 				_this._draw();
-			}, this._parent._stepms);
+			}, 1000 / this._parent.fps);
 		}
 	},
 
@@ -93,7 +94,7 @@ Section.prototype = {
 	},
 
 	check: function(time) {
-		if (time + this._parent._step > this.start && time < this.end) {
+		if (time + this._timer._step > this.start && time < this.end) {
 			if (!this.active) {
 				this.activate();
 			}
@@ -107,7 +108,7 @@ Section.prototype = {
 			this.active = true;
 
 			if (this.isFramesRange) {
-				this.streamToCache();
+				this._timer.bind(this.streamToCache, this);
 			} else {
 				this._source.pause();
 			}
@@ -159,8 +160,6 @@ Section.prototype = {
 	},
 
 	streamToCache: function() {
-		var _this = this;
-
 		if (this._streamed) {
 			switch(typeof this._options.onStreamed) {
 				case 'function':
@@ -180,15 +179,14 @@ Section.prototype = {
 				this.cacheFrame();
 			}
 
-			if (this._source.currentTime + this._parent._step > this.end) {
+			if (this._source.currentTime + this._timer._step > this.end) {
 				this._source.pause();
 				this._cached = true;
 				this._streamed = true;
+				this._timer.unbind(this.streamToCache, this);
+				this.streamToCache();
 				console.log('video is cached!');
 			}
-			setTimeout(function() {
-				_this.streamToCache();
-			}, this._parent._stepms);
 		}
 	},
 
@@ -200,13 +198,13 @@ Section.prototype = {
 			cachedContext;
 
 		if (this._framesCache[currentTime] != null) {
-			return;
+			return this._framesCache[currentTime];
 		}
 		cachedCanvas = document.createElement('canvas');
 		cachedContext = cachedCanvas.getContext('2d');
 		cachedCanvas.width = width;
 		cachedCanvas.height = height;
-		cachedContext.drawImage(this._source, 0, 0, width, height);
+		cachedContext.drawImage(this._parent._canvas, 0, 0, width, height);
 
 		// Пытаемся сделать заморозку канваса получая информацию о цвете пикселя, чтоб браузер не 
 		// вычистил его из памяти.
