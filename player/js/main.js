@@ -5,6 +5,7 @@ var video = document.getElementById('video'),
 	run = document.getElementById('run'),
 	jump = document.getElementById('jump'),
 	attack = document.getElementById('attack'),
+	loading = document.getElementById('loading'),
 	sectionsMap = new Sections(video, {
 		fps: 30,
 		onPlay: function() {
@@ -19,7 +20,8 @@ var video = document.getElementById('video'),
 			seeking.value = video.currentTime;
 		}
 	}),
-	currentSection = null;
+	currentSection = null,
+	videoIsLoaded = false;
 
 function selectSection(id) {
 	var sections = document.getElementsByName('sections');
@@ -107,7 +109,9 @@ sectionsMap.add({
 });
 
 video.addEventListener('progress', function() {
-	if (video.buffered.length === 1) {
+	if (!videoIsLoaded && video.buffered.length === 1) {
+		videoIsLoaded = true;
+		loading.style.display = 'none';
 		video.play();
 	}
 });
