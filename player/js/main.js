@@ -45,7 +45,6 @@ sectionsMap.add({
 		play.disabled = true;
 		pause.disabled = true;
 		run.value = 0;
-
 		$(run).fadeIn(section.sectionMovie.duration * 1000, function() {
 			run.disabled = false;
 		});
@@ -57,6 +56,7 @@ sectionsMap.add({
 
 		pause.disabled = false;
 		run.disabled = true;
+		run.style.display = 'none';
 		currentSection = null;
 	}
 }, {
@@ -70,6 +70,7 @@ sectionsMap.add({
 		play.disabled = true;
 		pause.disabled = true;
 		attack.disabled = false;
+		attack.style.display = 'block';
 		currentSection = section;
 	},
 	onDeactivate: function(section) {
@@ -78,6 +79,7 @@ sectionsMap.add({
 		jump.disabled = true;
 		pause.disabled = false;
 		attack.disabled = true;
+		attack.style.display = 'none';
 		currentSection = null;
 	}
 }, {
@@ -97,13 +99,15 @@ sectionsMap.add({
 		play.disabled = true;
 		pause.disabled = true;
 		jump.value = 0;
+		jump.style.display = 'block';
 		currentSection = section;
 	},
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		jump.disabled = true;
 		pause.disabled = false;
+		jump.disabled = true;
+		jump.style.display = 'none';
 		currentSection = null;
 	}
 });
