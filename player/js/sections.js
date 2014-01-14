@@ -45,9 +45,6 @@ Sections.prototype = {
 		}, false);
 
 		this._canvas = document.createElement('canvas');
-		this._source.parentNode.insertBefore(this._canvas, this._source);
-		this._canvas.className = 'bVideoStream';
-
 		this._canvas.width = this._source.width;
 		this._canvas.height = this._source.height;
 		this._context = this._canvas.getContext('2d');

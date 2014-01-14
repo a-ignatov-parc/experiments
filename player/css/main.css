@@ -8,11 +8,6 @@
 	position: relative;
 }
 
-.bVideoStream {
-	position: absolute;
-	z-index: -1;
-}
-
 .bSection {
 	top: 0;
 	left: 0;
