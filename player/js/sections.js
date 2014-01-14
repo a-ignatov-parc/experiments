@@ -47,8 +47,10 @@ Sections.prototype = {
 	},
 
 	check: function() {
-		for (var i = 0, length = this._sections.length; i < length; i++) {
-			this._sections[i].check(this._source.currentTime);
+		if (!this.findActive()) {
+			for (var i = 0, length = this._sections.length; i < length; i++) {
+				this._sections[i].check(this._source.currentTime);
+			}
 		}
 	},
 

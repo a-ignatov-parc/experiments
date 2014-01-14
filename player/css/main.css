@@ -1,3 +1,9 @@
+.bContainer {
+	width: 1280px;
+	margin: 0 auto;
+	position: relative;
+}
+
 .bVideoContainer {
 	position: relative;
 }
@@ -6,4 +12,14 @@
 	top: 0;
 	left: 0;
 	position: absolute;
+}
+
+.bControl {
+	top: 680px;
+	left: 50%;
+	width: 100px;
+	margin-left: -50px;
+	position: absolute;
+	display: none;
+	z-index: 1;
 }

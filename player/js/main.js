@@ -2,7 +2,8 @@ var video = document.getElementById('video'),
 	play = document.getElementById('play'),
 	pause = document.getElementById('pause'),
 	seeking = document.getElementById('seeking'),
-	range = document.getElementById('range'),
+	run = document.getElementById('run'),
+	jump = document.getElementById('jump'),
 	attack = document.getElementById('attack'),
 	sectionsMap = new Sections(video, {
 		fps: 30,
@@ -20,18 +21,50 @@ var video = document.getElementById('video'),
 	}),
 	currentSection = null;
 
+function selectSection(id) {
+	var sections = document.getElementsByName('sections');
+
+	for (var i = 0, length = sections.length; i < length; i++) {
+		if (sections[i].value == id) {
+			sections[i].checked = true;
+		}
+	}
+}
+
 sectionsMap.add({
-	time: 4,
+	time: [2.25, 3.7],
+	onStreamed: false,
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
-		var sections = document.getElementsByName('sections');
+		section.setCurrentProgress(0);
+		selectSection(section.id);
 
-		for (var i = 0, length = sections.length; i < length; i++) {
-			if (sections[i].value == section.id) {
-				sections[i].checked = true;
-			}
-		}
+		play.disabled = true;
+		pause.disabled = true;
+		run.value = 0;
+
+		$(run).fadeIn(section.sectionMovie.duration * 1000, function() {
+			run.disabled = false;
+		});
+
+		currentSection = section;
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
+
+		pause.disabled = false;
+		run.disabled = true;
+		currentSection = null;
+	}
+}, {
+	time: 4.4,
+	onStreamed: false,
+	onActivate: function(section) {
+		console.log('section with id: "' + section.id + '" is activated');
+
+		selectSection(section.id);
+
 		play.disabled = true;
 		pause.disabled = true;
 		attack.disabled = false;
@@ -40,7 +73,7 @@ sectionsMap.add({
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		range.disabled = true;
+		jump.disabled = true;
 		pause.disabled = false;
 		attack.disabled = true;
 		currentSection = null;
@@ -51,30 +84,31 @@ sectionsMap.add({
 		var percentage = Math.floor((sectionMovie.currentTime / sectionMovie.duration) * 100);
 
 		if (!percentage) {
-			range.disabled = false;
+			jump.disabled = false;
 		}
 	},
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
-		var sections = document.getElementsByName('sections');
+		selectSection(section.id);
 
-		for (var i = 0, length = sections.length; i < length; i++) {
-			if (sections[i].value == section.id) {
-				sections[i].checked = true;
-			}
-		}
 		play.disabled = true;
 		pause.disabled = true;
-		range.value = 0;
+		jump.value = 0;
 		currentSection = section;
 	},
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		range.disabled = true;
+		jump.disabled = true;
 		pause.disabled = false;
 		currentSection = null;
+	}
+});
+
+video.addEventListener('progress', function() {
+	if (video.buffered.length === 1) {
+		video.play();
 	}
 });
 
@@ -90,15 +124,29 @@ pause.addEventListener('click', function() {
 	}
 });
 
-range.addEventListener('change', function() {
-	if (!range.disabled) {
-		currentSection.setCurrentProgress(range.value);
+jump.addEventListener('change', function() {
+	if (!jump.disabled) {
+		currentSection.setCurrentProgress(jump.value);
 	}
 });
 
-range.addEventListener('mouseup', function() {
-	if (!range.disabled) {
-		if (range.value == 100) {
+jump.addEventListener('mouseup', function() {
+	if (!jump.disabled) {
+		if (jump.value == 100) {
+			currentSection.complete();
+		}
+	}
+});
+
+run.addEventListener('change', function() {
+	if (!run.disabled) {
+		currentSection.setCurrentProgress(run.value);
+	}
+});
+
+run.addEventListener('mouseup', function() {
+	if (!run.disabled) {
+		if (run.value == 100) {
 			currentSection.complete();
 		}
 	}
@@ -109,5 +157,3 @@ attack.addEventListener('click', function() {
 		currentSection.complete();
 	}
 });
-
-video.play();

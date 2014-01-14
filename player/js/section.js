@@ -142,7 +142,7 @@ Section.prototype = {
 			return;
 		}
 
-		if (typeof(processor) !== 'function') {
+		if (typeof processor !== 'function') {
 			processor = function(timeline) {
 				return timeline;
 			}
@@ -155,15 +155,26 @@ Section.prototype = {
 
 	setCurrentProgress: function(percentage) {
 		this._draw(null, this._timeline[Math.floor(this._timeline.length * (percentage || 0) / 100)]);
+		this.show();
 	},
 
 	streamToCache: function() {
 		var _this = this;
 
 		if (this._streamed) {
-			this.play(function(timeline) {
-				return timeline.reverse();
-			});
+			switch(typeof this._options.onStreamed) {
+				case 'function':
+					this._options.onStreamed(this);
+					break;
+				case 'boolean':
+					if (!this._options.onStreamed) {
+						break;
+					}
+				default:
+					this.play(function(timeline) {
+						return timeline.reverse();
+					});
+			}
 		} else {
 			if (!this._cached) {
 				this.cacheFrame();
