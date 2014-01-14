@@ -198,7 +198,7 @@ Section.prototype = {
 		cachedContext = cachedCanvas.getContext('2d');
 		cachedCanvas.width = width;
 		cachedCanvas.height = height;
-		cachedContext.drawImage(this._parent._canvas, 0, 0, width, height);
+		cachedContext.drawImage(this._source, 0, 0, width, height);
 
 		// Пытаемся сделать заморозку канваса получая информацию о цвете пикселя, чтоб браузер не 
 		// вычистил его из памяти.
