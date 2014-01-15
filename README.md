@@ -23,6 +23,9 @@ Trying to achive custom behavour with video playback
 1. Correct HFP (High Frame Playback) video playback and playback rate changing
 1. Video tagging
 
+A little [demo](http://a-ignatov-parc.github.io/experiments/player/)
+
+
 ## Tag
 Created simple constructor that can emulate DOM tree operating with Objects. 
 
