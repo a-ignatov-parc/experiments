@@ -29,4 +29,4 @@ A little [demo](http://a-ignatov-parc.github.io/experiments/player/)
 ## Tag
 Created simple constructor that can emulate DOM tree operating with Objects. 
 
-For more details see [demo](http://jsfiddle.net/ant_Ti/B35ub/)
+For more details see [demo](http://a-ignatov-parc.github.io/experiments/tag/)

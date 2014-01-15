@@ -1,5 +1,4 @@
 // Tag constructor based on strings.
-// Example can be seen here: http://jsfiddle.net/ant_Ti/B35ub/
 var Tag = function(tag, params, serialize) {
 	params || (params = {});
 	this._tag = tag || 'div';

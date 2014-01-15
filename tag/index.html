@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>html tag constructor demo</title>
+		<script src="tag.js"></script>
+	</head>
+	<body>
+		<pre id="result" style="white-space: pre-wrap; width: 500px;"></pre>
+		<script>
+			var result = document.getElementById('result'),
+				delimiter = new Tag('br'),
+				count = 0;
+
+			function print(element) {
+				if (element instanceof Tag) {
+					result.innerHTML += 'Exemple #' + (++count) + delimiter;
+					result.innerHTML += element
+						.toString()
+						.replace(/\</g, '&lt;')
+						.replace(/\>/g, '&gt;');
+					result.innerHTML += delimiter + delimiter;
+				}
+			}
+		</script>
+		<script>
+			var element, br, br1;
+
+			// Example #1
+			element = new Tag('div', {
+				html: 'test'
+			});
+			print(element);
+
+			// Example #2
+			element.append(new Tag('span', {
+				html: 'test2'
+			}));
+			print(element);
+
+			// Example #3
+			element
+				.prepend(new Tag('h1', {
+					html: 'title',
+					attributes: {
+						class: ['big', 'has-title'],
+						title: 'title'
+					}
+				}))
+				.append(new Tag('img', {
+					html: 'dummy',
+					attributes: {
+						src: 'https://www.google.ru/images/srpr/logo11w.png',
+						width: 269,
+						height: 95,
+						alt: ''
+					}
+				}));
+			print(element);
+
+			// Example #4
+			br = new Tag('br');
+			br1 = new Tag('br');
+			element.prepend(br, '<i>icon</i>').append('<i>icon2</i>', br1);
+			print(element);
+
+			// Example #5
+			element.remove(br);
+			br1.remove();
+			print(element);
+		</script>
+	</body>
+</html>
