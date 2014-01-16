@@ -1,0 +1,117 @@
+.bContainer {
+	height: 500px;
+	margin-bottom: 50px;
+	position: relative;
+}
+
+.bContainer.ps2 {
+	background: url('../img/planetside2.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.rf {
+	background: url('../img/rf.jpg') 50% -45px no-repeat;
+}
+
+.bContainer.apb {
+	background: url('../img/apb.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.l2 {
+	background: url('../img/l2.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.r2 {
+	background: url('../img/r2.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.atl {
+	background: url('../img/atl.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.aion {
+	background: url('../img/aion.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.pb {
+	background: url('../img/pb.jpg') 50% 0 no-repeat;
+}
+
+.bContainer.ofc {
+	background: url('../img/ofc.jpg') 50% 0 no-repeat;
+}
+
+.bContainerMaxWidth {
+	width: auto;
+	height: 285px;
+	max-width: 1200px;
+	padding: 0 20px;
+	margin: 0 auto;
+	position: relative;
+}
+
+.bTopLine,
+.bBottomLine {
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 35px;
+	position: absolute;
+	overflow: hidden;
+}
+
+.bBottomLine {
+	top: auto;
+	bottom: 0;
+	height: 60px;
+}
+
+.bLineImage {
+	left: 50%;
+	margin-left: -900px;
+	position: absolute;
+}
+
+.bTopLineImage {
+	top: 0;
+}
+.bBottomLineImage {
+	top: -225px;
+}
+
+.rf .bTopLineImage {
+	top: -45px;
+}
+.rf .bBottomLineImage {
+	top: -270px;
+}
+
+.bTopLineFade,
+.bBottomLineFade {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, .5);
+	/*background: rgba(0, 0, 0, .5);*/
+	position: absolute;
+}
+
+.bBottomLine,
+.bBottomLineFade {
+	-webkit-border-radius: 6px 6px 0 0;
+	-moz-border-radius: 6px 6px 0 0;
+	border-radius: 6px 6px 0 0;
+}
+
+.bContent {
+	top: 100%;
+	left: 0;
+	right: 0;
+	height: 215px;
+	background: #fff;
+	position: absolute;
+}
+
+.bInfo {
+	font: 12px/35px Arial,sans-serif;
+}
