@@ -6,8 +6,8 @@ var canvas = document.getElementById('canvas'),
 	context = canvas.getContext('2d'),
 	image = new Image(),
 	perf = new Perf(),
-	decreaseRatio = 5,
-	blurRadius = 5;
+	decreaseRatio = 8,
+	blurRadius = 3;
 
 image.onload = function() {
 	var result,
@@ -20,8 +20,6 @@ image.onload = function() {
 	context.drawImage(image, (canvas.width / 2) - (imageWidth / 2), 0, imageWidth, imageHeight);
 
 	perf.start();
-
-	// boxBlurCanvasRGB('canvas', 0, 0, imageWidth, imageHeight, blurRadius);
 
 	stackBlurCanvasRGB('canvas', 0, 0, canvas.width, canvas.height, blurRadius);
 

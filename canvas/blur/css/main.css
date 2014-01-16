@@ -71,6 +71,15 @@
 	position: absolute;
 }
 
+#result,
+.bLineImage {
+	-webkit-transform: translatez(1px);
+	-moz-transform: translatez(1px);
+	-ms-transform: translatez(1px);
+	-o-transform: translatez(1px);
+	transform: translatez(1px);
+}
+
 .bTopLineImage {
 	top: 0;
 }
