@@ -19,11 +19,23 @@ Sections.prototype = {
 		this.check();
 	},
 
+	_visibilityChangeHandler: function() {
+		if (document[this._timer._visibilityKey]) {
+			this._source.pause();
+		} else {
+			this._source.play();
+		}
+	},
+
 	init: function() {
 		var _this = this,
 			video = this._source,
 			options = this._options,
 			warmed = false;
+
+		this._timer.bindVisibilityHandler(function() {
+			_this._visibilityChangeHandler();
+		});
 
 		video.addEventListener('playing', function() {
 			if (typeof options.onPlay === 'function' && !_this.findActive()) {

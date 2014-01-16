@@ -9,6 +9,7 @@ var Section = function(id, source, options, parent) {
 	this._currentTimeline = null;
 	this._skipCachedCanvasFreeze = false;
 	this._streamed = false;
+	this._originalVolumeLvl = 1;
 	this._canvas;
 	this._context;
 	this._eventHandlerLink;
@@ -24,6 +25,8 @@ var Section = function(id, source, options, parent) {
 		currentTime: 0,
 		duration: this.end - this.start
 	};
+	this.cooldown = 0;
+	this.keyframe;
 
 	this.init();
 };
@@ -64,13 +67,21 @@ Section.prototype = {
 		if (this._currentTimeline && !this._currentTimeline.length) {
 			this.playing = false;
 			this._currentTimeline = null;
-			console.log('video has been played');
 		}
 
 		if (this.playing) {
 			this._playbackTimer = setTimeout(function() {
 				_this._draw();
 			}, 1000 / this._parent.fps);
+		}
+	},
+
+	_cooldown: function(stepms) {
+		this.cooldown -= stepms;
+
+		if (this.cooldown <= 0) {
+			this.cooldown = 0;
+			this._timer.unbind(this._cooldown, this);
 		}
 	},
 
@@ -83,6 +94,25 @@ Section.prototype = {
 		this._source.parentNode.insertBefore(this._canvas, this._source.nextSibling);
 		this._context = this._canvas.getContext('2d');
 		this.hide();
+
+		if (this._options.keyframe) {
+			var _this = this,
+				image,
+				handler = function() {
+					_this.keyframe = image;
+					_this.keyframe.currentTime = _this.start;
+					_this.cacheFrame(_this.keyframe);
+				};
+
+			if (this._options.keyframe instanceof Image) {
+				image = this._options.keyframe;
+				handler();
+			} else if (typeof this._options.keyframe === 'string') {
+				image = new Image();
+				image.onload = handler;
+				image.src = this._options.keyframe;
+			}
+		}
 	},
 
 	show: function() {
@@ -94,8 +124,8 @@ Section.prototype = {
 	},
 
 	check: function(time) {
-		if (time + this._timer._step > this.start && time < this.end) {
-			if (!this.active) {
+		if (time + this._timer.step >= this.start && time - this._timer.step <= this.end) {
+			if (!this.active && !this.cooldown) {
 				this.activate();
 			}
 		} else if (this.active) {
@@ -111,6 +141,10 @@ Section.prototype = {
 				this._timer.bind(this.streamToCache, this);
 			} else {
 				this._source.pause();
+
+				if (this.keyframe) {
+					this.setCurrentProgress();
+				}
 			}
 
 			if (typeof this._options.onActivate === 'function') {
@@ -124,6 +158,9 @@ Section.prototype = {
 			this.active = false;
 			this.hide();
 			this._streamed = false;
+
+			this.cooldown = 200;
+			this._timer.bind(this._cooldown, this);
 
 			if (typeof this._options.onDeactivate === 'function') {
 				this._options.onDeactivate(this);
@@ -165,6 +202,12 @@ Section.prototype = {
 				this._options.onStreamEnd(this);
 			}
 		} else {
+			if (this._timeline.length === 1) {
+				this._originalVolumeLvl = this._source.volume;
+				this._source.volume = 0;
+				// this._source.playbackRate = .5;
+			}
+
 			if (!this._cached) {
 				this.cacheFrame();
 			}
@@ -173,21 +216,24 @@ Section.prototype = {
 				this._options.onStreamStart(this);
 			}
 
-			if (this._source.currentTime + this._timer._step > this.end) {
+			if (this._source.currentTime + this._timer.step > this.end) {
+				this._source.playbackRate = 1;
 				this._source.pause();
+				this._source.volume = this._originalVolumeLvl;
 				this._cached = true;
 				this._streamed = true;
 				this._timer.unbind(this.streamToCache, this);
 				this.streamToCache();
-				console.log('video is cached!');
 			}
 		}
 	},
 
-	cacheFrame: function() {
-		var width = this._source.width,
-			height = this._source.height,
-			currentTime = this._source.currentTime,
+	cacheFrame: function(source) {
+		source || (source = this._source);
+
+		var width = source.width,
+			height = source.height,
+			currentTime = source.currentTime,
 			cachedCanvas,
 			cachedContext;
 
@@ -198,7 +244,7 @@ Section.prototype = {
 		cachedContext = cachedCanvas.getContext('2d');
 		cachedCanvas.width = width;
 		cachedCanvas.height = height;
-		cachedContext.drawImage(this._source, 0, 0, width, height);
+		cachedContext.drawImage(source, 0, 0, width, height);
 
 		// Пытаемся сделать заморозку канваса получая информацию о цвете пикселя, чтоб браузер не 
 		// вычистил его из памяти.

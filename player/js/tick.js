@@ -2,14 +2,42 @@ var Tick = function(fps) {
 	var _this = this;
 
 	this._fps = fps || 30;
-	this._stepms = 1000 / this._fps;
-	this._step = this._stepms / 1000;
 	this._handlers = [];
 	this._contexts = [];
-	this._timerHandler = function() {
-		_this._tick();
+	this._timerHandler = function(ms) {
+		if (_this._resetTimer) {
+			_this._resetTimer = false;
+		} else {
+			_this.stepms = ms - _this._prevStep;
+		}
+		_this._prevStep = ms;
+		_this.step = _this.stepms / 1000;
+		_this.execute();
 	};
+	this._prevStep = 0;
+	this._resetTimer = false;
 	this._timer;
+
+	if (document.hidden != null) { // Opera 12.10 and Firefox 18 and later support 
+		this._visibilityKey = 'hidden';
+		this._visibilityChange = 'visibilitychange';
+	} else if (document.mozHidden != null) {
+		this._visibilityKey = 'mozHidden';
+		this._visibilityChange = 'mozvisibilitychange';
+	} else if (document.msHidden != null) {
+		this._visibilityKey = 'msHidden';
+		this._visibilityChange = 'msvisibilitychange';
+	} else if (document.webkitHidden != null) {
+		this._visibilityKey = 'webkitHidden';
+		this._visibilityChange = 'webkitvisibilitychange';
+	}
+
+	this.step;
+	this.stepms;
+
+	this.bindVisibilityHandler(function() {
+		_this._visibilityChangeHandler();
+	});
 
 	this.start();
 };
@@ -17,14 +45,27 @@ var Tick = function(fps) {
 Tick.prototype = {
 	constructor: Tick,
 
-	_tick: function() {
+	_visibilityChangeHandler: function() {
+		if (document[this._visibilityKey]) {
+			this._resetTimer = true;
+		}
+	},
+
+	execute: function() {
 		for (var i = 0, length = this._handlers.length; i < length; i++) {
 			if (typeof this._handlers[i] === 'function') {
-				this._handlers[i].call(this._contexts[i]);
+				this._handlers[i].call(this._contexts[i], this.stepms);
 			}
 		}
+		this._timer = requestAnimationFrame(this._timerHandler);
+	},
 
-		this._timer = setTimeout(this._timerHandler, this._stepms);
+	bindVisibilityHandler: function(handler) {
+		document.addEventListener(this._visibilityChange, handler, false);
+	},
+
+	unbindVisibilityHandler: function(handler) {
+		document.removeEventListener(this._visibilityChange, handler, false);
 	},
 
 	bind: function(handler, context) {
@@ -45,12 +86,11 @@ Tick.prototype = {
 
 	start: function() {
 		this.stop();
-		this._tick();
-		console.log('sections stepms', this._step);
+		this.execute();
 	},
 
 	stop: function() {
-		this._timer && clearTimeout(this._timer);
+		this._timer && cancelAnimationFrame(this._timer);
 		this._timer = null;
 	}
 };
