@@ -6,8 +6,8 @@ var canvas = document.getElementById('canvas'),
 	context = canvas.getContext('2d'),
 	image = new Image(),
 	perf = new Perf(),
-	decreaseRatio = 4,
-	blurRadius = 2;
+	decreaseRatio = 5,
+	blurRadius = 5;
 
 image.onload = function() {
 	var result,
