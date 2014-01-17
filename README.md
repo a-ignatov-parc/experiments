@@ -19,9 +19,16 @@ Different experiments with technologies, libs etc.
 
 All experiments related to canvas:
 
-1. EaselJS API experiments. Trying to understand does this lib fit our targets.
-1. Discovered very fast bluring technique that in theory can run in runtime
-1. [Demo](http://a-ignatov-parc.github.io/experiments/canvas/videoblur/) showing previosly dicovered bluring technique trying to blur video in realtime
+### easeljs
+EaselJS API experiments. Trying to understand does this lib fit our targets.
+
+### blur
+Discovered very fast bluring technique that in theory can run in runtime
+
+### videoblur
+[Demo](http://a-ignatov-parc.github.io/experiments/canvas/videoblur/) showing previosly dicovered bluring technique trying to blur video in realtime
+
+![Text on blurred video part](https://cloudup.com/cesy6HULb8v+)
 
 
 ## Player
