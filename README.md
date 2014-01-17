@@ -6,7 +6,10 @@ Different experiments with technologies, libs etc.
 
 # Experiments list
 
-1. `/canvas` – experiments with canvas library EaselJS
+1. `/canvas` – experiments with canvas
+	1. `/easeljs` – experiment with EaselJS library
+	1. `/blur` – experiment with discovered fast bluring technique
+	1. `/videoblur` – experiment with realtime video blur using fast bluring
 1. `/player` – experiments with video playback custom cross-browser behaviour
 1. `/tag` – experiments with HTML tag constructor
 
@@ -14,7 +17,12 @@ Different experiments with technologies, libs etc.
 
 ## Canvas
 
-EaselJS API experiments. Trying to understand does this lib fit our targets.
+All experiments related to canvas:
+
+1. EaselJS API experiments. Trying to understand does this lib fit our targets.
+1. Discovered very fast bluring technique that in theory can run in runtime
+1. [Demo](http://a-ignatov-parc.github.io/experiments/canvas/videoblur/) showing previosly dicovered bluring technique trying to blur video in realtime
+
 
 ## Player
 Trying to achive custom behavour with video playback
