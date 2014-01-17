@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title>blur html blocks demo</title>
+
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script src="js/StackBlur.js"></script>
+	</head>
+	<body>
+		<div class="bContainer">
+			<video width="620" height="310" id="video" autoplay loop>
+				<source src="videos/video.mp4" type="video/mp4" />
+				<source src="videos/video.webm" type="video/webm" />
+			</video>
+			<canvas id="processing"></canvas>
+			<div id="title" class="bVideo__eTitle">
+				<img id="result" class="bVideo__eTitle__eBlur" />
+				<i class="bVideo__eTitle__eBg"></i>
+				<div class="bVideo__eTitle__eText">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis elementum risus ut iaculis lobortis. Maecenas sit amet eleifend ante, non tempor nibh. Cras non massa a sapien mollis ullamcorper non a mi. Morbi vitae tincidunt erat, id luctus dui. Cras dapibus mauris non elit hendrerit tristique. Praesent id tempor urna, sed dictum lorem. Maecenas non lorem at diam rutrum faucibus a tristique ipsum.</div>
+			</div>
+		</div>
+		<script src="js/main.js"></script>
+	</body>
+</html>
