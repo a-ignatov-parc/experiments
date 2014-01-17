@@ -93,5 +93,16 @@ Sections.prototype = {
 				return this._sections[i];
 			}
 		}
+	},
+
+	goto: function(id) {
+		var activeSection = this.findActive();
+
+		if (this._sections[id]) {
+			if (activeSection && activeSection.id != id) {
+				activeSection.deactivate();
+			}
+			this._sections[id].goto();
+		}
 	}
 };

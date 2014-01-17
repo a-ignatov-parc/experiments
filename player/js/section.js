@@ -138,6 +138,8 @@ Section.prototype = {
 			this.active = true;
 
 			if (this.isFramesRange) {
+				this._originalVolumeLvl = this._source.volume;
+				this._source.play();
 				this._timer.bind(this.streamToCache, this);
 			} else {
 				this._source.pause();
@@ -156,16 +158,26 @@ Section.prototype = {
 	deactivate: function() {
 		if (this.active) {
 			this.active = false;
-			this.hide();
 			this._streamed = false;
+			this._source.volume = this._originalVolumeLvl;
+			this._timer.unbind(this.streamToCache, this);
 
 			this.cooldown = 200;
 			this._timer.bind(this._cooldown, this);
+
+			this.hide();
 
 			if (typeof this._options.onDeactivate === 'function') {
 				this._options.onDeactivate(this);
 			}
 		}
+	},
+
+	goto: function() {
+		this.setCurrentProgress();
+		this._source.pause();
+		this._source.currentTime = this.start;
+		this.activate();
 	},
 
 	complete: function() {
@@ -202,11 +214,7 @@ Section.prototype = {
 				this._options.onStreamEnd(this);
 			}
 		} else {
-			if (this._timeline.length === 1) {
-				this._originalVolumeLvl = this._source.volume;
-				this._source.volume = 0;
-				// this._source.playbackRate = .5;
-			}
+			this._source.volume = 0;
 
 			if (!this._cached) {
 				this.cacheFrame();
@@ -217,7 +225,6 @@ Section.prototype = {
 			}
 
 			if (this._source.currentTime + this._timer.step > this.end) {
-				this._source.playbackRate = 1;
 				this._source.pause();
 				this._source.volume = this._originalVolumeLvl;
 				this._cached = true;
@@ -233,7 +240,7 @@ Section.prototype = {
 
 		var width = source.width,
 			height = source.height,
-			currentTime = source.currentTime,
+			currentTime = ('' + source.currentTime).replace(/^([^.]+)\.(.{2})(.+)/, '$1.$2'),
 			cachedCanvas,
 			cachedContext;
 

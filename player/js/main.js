@@ -22,13 +22,10 @@ var video = document.getElementById('video'),
 	videoIsLoaded = false;
 
 function selectSection(id) {
-	var sections = document.getElementsByName('sections');
-
-	for (var i = 0, length = sections.length; i < length; i++) {
-		if (sections[i].value == id) {
-			sections[i].checked = true;
-		}
-	}
+	$('#section' + id)
+		.addClass('bList__eItem__mActive')
+		.siblings('.bList__eItem__mActive')
+		.removeClass('bList__eItem__mActive');
 }
 
 sectionsMap.add({
@@ -165,3 +162,14 @@ attack.addEventListener('click', function() {
 		currentSection.complete();
 	}
 });
+
+var sectionsClickHandler = function(event) {
+	var item = $(event.currentTarget);
+
+	if (!item.hasClass('bList__eItem__mActive')) {
+		sectionsMap.goto(item.attr('rel'));
+	}
+	return false;
+}
+
+$('.bList__eItem').on('click', sectionsClickHandler);
