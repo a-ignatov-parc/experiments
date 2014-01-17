@@ -3,6 +3,7 @@ var Sections = function(source, options) {
 	this._sections = [];
 	this._options = options;
 	this._timer = new Tick();
+	this._playing = false;
 
 	this.fps = this._options.fps;
 
@@ -20,10 +21,12 @@ Sections.prototype = {
 	},
 
 	_visibilityChangeHandler: function() {
-		if (document[this._timer._visibilityKey]) {
-			this._source.pause();
-		} else {
-			this._source.play();
+		if (this._playing) {
+			if (document[this._timer._visibilityKey]) {
+				this._source.pause();
+			} else {
+				this._source.play();
+			}
 		}
 	},
 
@@ -38,6 +41,11 @@ Sections.prototype = {
 		});
 
 		video.addEventListener('playing', function() {
+			if (document[_this._timer._visibilityKey]) {
+				return;
+			}
+			_this._playing = true;
+
 			if (typeof options.onPlay === 'function' && !_this.findActive()) {
 				options.onPlay(video);
 			}
@@ -53,6 +61,11 @@ Sections.prototype = {
 		}, false);
 
 		video.addEventListener('pause', function() {
+			if (document[_this._timer._visibilityKey]) {
+				return;
+			}
+			_this._playing = false;
+
 			if (typeof options.onPause === 'function' && !_this.findActive()) {
 				options.onPause(video);
 			}
