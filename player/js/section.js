@@ -22,6 +22,7 @@ var Section = function(id, source, options, parent) {
 	this.end = this.isFramesRange ? this._options.time[1] : this._options.time;
 	this.playing = false;
 	this.sectionMovie = {
+		progress: 0,
 		currentTime: 0,
 		duration: this.end - this.start
 	};
@@ -52,6 +53,7 @@ Section.prototype = {
 
 			if (currentTime != null) {
 				this.sectionMovie.currentTime = currentTime - this.start;
+				this.sectionMovie.progress = Math.round((this.sectionMovie.currentTime / this.sectionMovie.duration) * 100);
 				frame = this._framesCache[currentTime];
 			}
 		}
@@ -61,7 +63,7 @@ Section.prototype = {
 		}
 
 		if (typeof this._options.onTimeupdate === 'function') {
-			this._options.onTimeupdate(this.sectionMovie);
+			this._options.onTimeupdate(this.sectionMovie, this);
 		}
 
 		if (this._currentTimeline && !this._currentTimeline.length) {
@@ -124,7 +126,7 @@ Section.prototype = {
 	},
 
 	check: function(time) {
-		if (time + this._timer.step >= this.start && time - this._timer.step <= this.end) {
+		if (time >= this.start && time - this._timer.step <= this.end) {
 			if (!this.active && !this.cooldown) {
 				this.activate();
 			}

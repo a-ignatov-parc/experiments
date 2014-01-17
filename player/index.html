@@ -13,18 +13,35 @@
 	<body>
 		<div class="bContainer">
 			<div class="bVideoContainer">
-				<video width="960" height="540" id="video">
-					<source src="videos/video.mp4" type="video/mp4" />
-					<source src="videos/video.webm" type="video/webm" />
-				</video>
-			</div>
-			<div>
-				<div id="loading">Loading video...</div>
-				<button id="play" disabled>Play</button>
-				<label>
-					seeking:
-					<input id="seeking" type="text" disabled value="0" />
-				</label>
+				<div class="bVideo">
+					<video width="960" height="540" id="video">
+						<source src="videos/video.mp4" type="video/mp4" />
+						<source src="videos/video.webm" type="video/webm" />
+					</video>
+					<i id="loading">Loading video...</i>
+					<label>
+						seeking:
+						<input id="seeking" type="text" disabled value="0" />
+					</label>
+				</div>
+				<div class="bVideo__eControls">
+					<button id="play" disabled>Play</button>
+
+					<!-- Old controls -->
+					<input class="bControl" id="run" type="range" min="0" max="100" value="0" step="1" disabled />
+					<button class="bControl" id="attack" disabled>Fight!</button>
+					<!-- Old controls -->
+				</div>
+				<ul class="bVideo__eScenesControls">
+					<li class="bVideo__eScenesControls__eScene bVideo__eScenesControls__eScene__mScene0">
+						<img class="bVideo__eSceneControl" src="img/controls-scene1.png" width="249" height="165" />
+					</li>
+					<li class="bVideo__eScenesControls__eScene bVideo__eScenesControls__eScene__mScene1">
+						<img class="bVideo__eSceneControl" src="img/controls-scene2.png" width="292" height="83" />
+					</li>
+					<li class="bVideo__eScenesControls__eScene bVideo__eScenesControls__eScene__mScene2"></li>
+					<li class="bVideo__eScenesControls__eScene bVideo__eScenesControls__eScene__mScene3"></li>
+				</ul>
 			</div>
 			<ul class="bList">
 				<li id="section0" rel="0" class="bList__eItem">
@@ -57,23 +74,6 @@
 					</div>
 				</li>
 			</ul>
-			<div>
-				<h3>Sections</h3>
-				<ol>
-					<li>
-						<input name="sections" type="radio" value="0" disabled />
-						<input class="bControl" id="run" type="range" min="0" max="100" value="0" step="1" disabled />
-					</li>
-					<li>
-						<input name="sections" type="radio" value="1" disabled />
-						<button class="bControl" id="attack" disabled>Fight!</button>
-					</li>
-					<li>
-						<input name="sections" type="radio" value="2" disabled />
-						<input class="bControl" id="jump" type="range" min="0" max="100" value="0" step="1" disabled />
-					</li>
-				</ol>
-			</div>
 		</div>
 		<script src="js/main.js"></script>
 	</body>

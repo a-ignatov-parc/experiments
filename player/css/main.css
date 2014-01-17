@@ -8,6 +8,14 @@
 	position: relative;
 }
 
+.bVideo__eControls {
+	top: 0;
+	left: 0;
+	right: 0;
+	position: absolute;
+	z-index: 1;
+}
+
 .bSection {
 	top: 0;
 	left: 0;
@@ -80,3 +88,41 @@
 .bList__eItem__mActive .bList__eItem__eBorder {
 	background: #ccc;
 }
+/* Sections list */
+
+/* Scenes controls */
+.bVideo__eScenesControls {
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	position: absolute;
+}
+
+.bVideo__eScenesControls__eScene {
+	list-style: none;
+	-webkit-transition: opacity 200ms ease-in-out;
+	-moz-transition: opacity 200ms ease-in-out;
+	-ms-transition: opacity 200ms ease-in-out;
+	-o-transition: opacity 200ms ease-in-out;
+	transition: opacity 200ms ease-in-out;
+	opacity: 0;
+	display: block;
+}
+
+.bVideo__eScenesControls__eScene__mActive {
+	opacity: 1;
+}
+
+.bVideo__eScenesControls__eScene__mScene0 .bVideo__eSceneControl {
+	top: 160px;
+	right: 290px;
+	position: absolute;
+}
+
+.bVideo__eScenesControls__eScene__mScene1 .bVideo__eSceneControl {
+	top: 50px;
+	right: 350px;
+	position: absolute;
+}
+/* Scenes controls */

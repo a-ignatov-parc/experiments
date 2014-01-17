@@ -2,7 +2,6 @@ var video = document.getElementById('video'),
 	play = document.getElementById('play'),
 	seeking = document.getElementById('seeking'),
 	run = document.getElementById('run'),
-	jump = document.getElementById('jump'),
 	attack = document.getElementById('attack'),
 	loading = document.getElementById('loading'),
 	sectionsMap = new Sections(video, {
@@ -26,11 +25,29 @@ function selectSection(id) {
 		.addClass('bList__eItem__mActive')
 		.siblings('.bList__eItem__mActive')
 		.removeClass('bList__eItem__mActive');
+
+	showControls(id);
+}
+
+function showControls(id) {
+	hideControls();
+	$('.bVideo__eScenesControls__eScene__mScene' + id).addClass('bVideo__eScenesControls__eScene__mActive');
+}
+
+function hideControls() {
+	$('.bVideo__eScenesControls__eScene').removeClass('bVideo__eScenesControls__eScene__mActive');
 }
 
 sectionsMap.add({
 	time: [15.9, 17],
 	keyframe: 'img/keyframe-scene1.jpg',
+	onTimeupdate: function(sectionMovie, section) {
+		if (sectionMovie.progress) {
+			hideControls();
+		} else {
+			showControls(section.id);
+		}
+	},
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
@@ -39,6 +56,7 @@ sectionsMap.add({
 
 		play.disabled = true;
 		run.value = 0;
+
 		$(run).fadeIn(section.sectionMovie.duration * 1000, function() {
 			run.disabled = false;
 		});
@@ -47,6 +65,8 @@ sectionsMap.add({
 	},
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
+
+		hideControls();
 
 		run.disabled = true;
 		run.style.display = 'none';
@@ -68,7 +88,8 @@ sectionsMap.add({
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		jump.disabled = true;
+		hideControls();
+
 		attack.disabled = true;
 		attack.style.display = 'none';
 		currentSection = null;
@@ -88,7 +109,8 @@ sectionsMap.add({
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		jump.disabled = true;
+		hideControls();
+
 		attack.disabled = true;
 		attack.style.display = 'none';
 		currentSection = null;
@@ -108,7 +130,8 @@ sectionsMap.add({
 	onDeactivate: function(section) {
 		console.log('section with id: "' + section.id + '" is deactivated');
 
-		jump.disabled = true;
+		hideControls();
+
 		attack.disabled = true;
 		attack.style.display = 'none';
 		currentSection = null;
@@ -126,20 +149,6 @@ video.addEventListener('progress', function() {
 play.addEventListener('click', function() {
 	if (!play.disabled) {
 		video.play();
-	}
-});
-
-jump.addEventListener('change', function() {
-	if (!jump.disabled) {
-		currentSection.setCurrentProgress(jump.value);
-	}
-});
-
-jump.addEventListener('mouseup', function() {
-	if (!jump.disabled) {
-		if (jump.value == 100) {
-			currentSection.complete();
-		}
 	}
 });
 
