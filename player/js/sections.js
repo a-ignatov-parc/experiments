@@ -1,11 +1,20 @@
-var Sections = function(source, options) {
-	this._source = source;
+var Sections = function(container, options) {
+	this._container = container;
 	this._sections = [];
+	this._sectionsSources = [];
 	this._options = options;
 	this._timer = new Tick();
 	this._playing = false;
+	this._readyCount = 0;
 
-	this.fps = this._options.fps;
+	this.video = this._options.video;
+	this.movie = {
+		progress: 0,
+		duration: 0,
+		currentTime: 0,
+		sequenceTime: 0,
+		sequenceProgress: 0
+	};
 
 	this.init();
 };
@@ -14,76 +23,137 @@ Sections.prototype = {
 	constructor: Sections,
 
 	_streamVideo: function() {
+		var activeSection = this.findActive();
+
+		this.movie.currentTime = activeSection.start + activeSection.sectionMovie.currentTime;
+		this.movie.progress = Math.round((this.movie.currentTime / this.movie.duration) * 100);
+		this.movie.sequenceTime = activeSection.sectionMovie.sequenceTime;
+		this.movie.sequenceProgress = activeSection.sectionMovie.sequenceProgress;
+
 		if (typeof this._options.onTimeupdate === 'function') {
-			this._options.onTimeupdate(this._source);
+			this._options.onTimeupdate(this.movie);
 		}
-		this.check();
 	},
 
 	_visibilityChangeHandler: function() {
 		if (this._playing) {
-			if (document[this._timer._visibilityKey]) {
-				this._source.pause();
+			if (this._isVisible()) {
+				this.play();
 			} else {
-				this._source.play();
+				this.pause();
 			}
+		}
+	},
+
+	_isVisible: function() {
+		return !document[this._timer._visibilityKey];
+	},
+
+	_createSectionSource: function(fileName) {
+		var _this = this,
+			movie = this.movie,
+			sectionVideo = document.createElement('video'),
+			sectionVideoSource;
+
+		sectionVideo.className = 'bSection';
+
+		if (!this._sectionsSources.length) {
+			sectionVideo.className += ' bSection__mFirst';
+		}
+		sectionVideo.width = this.video.width;
+		sectionVideo.height = this.video.height;
+		// sectionVideo.preload = 'metadata';
+		sectionVideo.preload = 'auto';
+
+		for (var i = 0, length = this.video.sources.length; i < length; i++) {
+			sectionVideoSource = document.createElement('source');
+			sectionVideoSource.type = this.video.sources[i].type;
+			sectionVideoSource.src = [this.video.baseUrl, fileName].join('/') + '.' + this.video.sources[i].extension;
+			sectionVideo.appendChild(sectionVideoSource);
+		}
+		// this._container.appendChild(sectionVideo);
+		this._container.insertBefore(sectionVideo, this._container.children[0]);
+
+		sectionVideo.addEventListener('ended', function() {
+			_this.next();
+		}, false);
+
+		sectionVideo.addEventListener('playing', function() {
+			_this._onPlayingHandler.apply(_this, arguments);
+		}, false);
+
+		sectionVideo.addEventListener('pause', function() {
+			_this._onPauseHandler.apply(_this, arguments);
+		}, false);
+
+		return sectionVideo;
+	},
+
+	_onPlayingHandler: function() {
+		if (!this._isVisible()) {
+			return;
+		}
+		this._playing = true;
+
+		if (typeof this._options.onPlay === 'function') {
+			this._options.onPlay(this.movie);
+		}
+		this._timer.bind(this._streamVideo, this);
+	},
+
+	_onPauseHandler: function() {
+		if (!this._isVisible()) {
+			return;
+		}
+		this._playing = false;
+
+		if (typeof this._options.onPause === 'function' && !this.findActive()) {
+			this._options.onPause(this.movie);
+		}
+		this._timer.unbind(this._streamVideo, this);
+	},
+
+	_onReadyHandler: function() {
+		for (var i = 0, length = this._sectionsSources.length; i < length; i++) {
+			this._sections[i].start = this.movie.duration;
+			this.movie.duration += this._sectionsSources[i].duration;
+		}
+
+		if (typeof this._options.onReady === 'function') {
+			this._options.onReady(this.movie);
 		}
 	},
 
 	init: function() {
-		var _this = this,
-			video = this._source,
-			options = this._options,
-			warmed = false;
+		var _this = this;
 
 		this._timer.bindVisibilityHandler(function() {
 			_this._visibilityChangeHandler();
 		});
-
-		video.addEventListener('playing', function() {
-			if (document[_this._timer._visibilityKey]) {
-				return;
-			}
-			_this._playing = true;
-
-			if (typeof options.onPlay === 'function' && !_this.findActive()) {
-				options.onPlay(video);
-			}
-
-			if (!warmed) {
-				var canvas = document.createElement('canvas'),
-					context = canvas.getContext('2d');
-
-				context.drawImage(video, 0, 0, video.width, video.height);
-				warmed = true;
-			}
-			_this._timer.bind(_this._streamVideo, _this);
-		}, false);
-
-		video.addEventListener('pause', function() {
-			if (document[_this._timer._visibilityKey]) {
-				return;
-			}
-			_this._playing = false;
-
-			if (typeof options.onPause === 'function' && !_this.findActive()) {
-				options.onPause(video);
-			}
-			_this._timer.unbind(_this._streamVideo, _this);
-		}, false);
 	},
 
 	add: function(options) {
-		for (var i = 0, length = arguments.length; i < length; i++) {
-			this._sections.push(new Section(this._sections.length, this._source, arguments[i], this));
-		}
-	},
+		var _this = this;
 
-	check: function() {
-		if (!this.findActive()) {
-			for (var i = 0, length = this._sections.length; i < length; i++) {
-				this._sections[i].check(this._source.currentTime);
+		for (var i = 0, length = arguments.length; i < length; i++) {
+			var id = this._sections.length,
+				options = arguments[i],
+				sectionSource = this._createSectionSource('section' + id);
+
+			if (!this._sectionsSources.length) {
+				sectionSource.load();
 			}
+			this._readyCount++;
+			this._sectionsSources.push(sectionSource);
+			this._sections.push(new Section(id, sectionSource, options, function(section) {
+				if (!section.id) {
+					section.activate();
+				}
+
+				if (!--_this._readyCount) {
+					_this._onReadyHandler();
+				}
+			}, this));
 		}
 	},
 
@@ -95,6 +165,42 @@ Sections.prototype = {
 		}
 	},
 
+	start: function() {
+		var activeSection = this.findActive() || this._sections[0];
+
+		if (!activeSection.finished) {
+			if (!activeSection.active) {
+				activeSection.activate();
+			} else {
+				activeSection.complete();
+			}
+		}
+	},
+
+	play: function() {
+		var activeSection = this.findActive();
+
+		if (activeSection) {
+			activeSection.play();
+		}
+	},
+
+	pause: function() {
+		var activeSection = this.findActive();
+
+		if (activeSection) {
+			activeSection.pause();
+		}
+	},
+
+	next: function() {
+		var activeSection = this.findActive();
+
+		if (activeSection) {
+			this.goto(activeSection.id + 1);
+		}
+	},
+
 	goto: function(id) {
 		var activeSection = this.findActive();
 
@@ -102,7 +208,7 @@ Sections.prototype = {
 			if (activeSection && activeSection.id != id) {
 				activeSection.deactivate();
 			}
-			this._sections[id].goto();
+			this._sections[id].activate();
 		}
 	}
 };

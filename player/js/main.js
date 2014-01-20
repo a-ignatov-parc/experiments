@@ -1,13 +1,30 @@
 var video = document.getElementById('video'),
 	play = document.getElementById('play'),
 	seeking = document.getElementById('seeking'),
+	sprogress = document.getElementById('sprogress'),
+	progress = document.getElementById('progress'),
 	run = document.getElementById('run'),
 	attack = document.getElementById('attack'),
 	loading = document.getElementById('loading'),
 	sectionsMap = new Sections(video, {
-		fps: 30,
-		onPlay: function() {
+		video: {
+			width: 960,
+			height: 540,
+			fps: 30,
+			baseUrl: 'videos',
+			sources: [{
+				type: 'video/mp4',
+				extension: 'mp4'
+			}, {
+				type: 'video/webm',
+				extension: 'webm'
+			}]
+		},
+		onReady: function() {
 			loading.style.display = 'none';
+			play.disabled = false;
+		},
+		onPlay: function() {
 			play.disabled = true;
 		},
 		onPause: function() {
@@ -15,6 +32,8 @@ var video = document.getElementById('video'),
 		},
 		onTimeupdate: function(video) {
 			seeking.value = video.currentTime;
+			progress.value = video.progress + ' %';
+			sprogress.value = video.sequenceProgress + ' %';
 		}
 	}),
 	currentSection = null,
@@ -39,10 +58,28 @@ function hideControls() {
 }
 
 sectionsMap.add({
-	time: [15.9, 17],
+	keyframe: 'img/keyframe-scene0.jpg',
+	onActivate: function(section) {
+		console.log('section with id: "' + section.id + '" is activated');
+
+		selectSection(section.id);
+		play.disabled = true;
+
+		currentSection = section;
+	},
+	onComplete: function(section) {
+		console.log('section with id: "' + section.id + '" is completed');
+		hideControls();
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
+		currentSection = null;
+	}
+}, {
 	keyframe: 'img/keyframe-scene1.jpg',
+	sequenceFrames: 'videos/section1-sequence.json',
 	onTimeupdate: function(sectionMovie, section) {
-		if (sectionMovie.progress) {
+		if (sectionMovie.sequenceProgress) {
 			hideControls();
 		} else {
 			showControls(section.id);
@@ -56,24 +93,24 @@ sectionsMap.add({
 
 		play.disabled = true;
 		run.value = 0;
-
-		$(run).fadeIn(section.sectionMovie.duration * 1000, function() {
-			run.disabled = false;
-		});
+		run.disabled = false;
+		run.style.display = 'block';
 
 		currentSection = section;
 	},
-	onDeactivate: function(section) {
-		console.log('section with id: "' + section.id + '" is deactivated');
+	onComplete: function(section) {
+		console.log('section with id: "' + section.id + '" is completed');
 
 		hideControls();
 
 		run.disabled = true;
 		run.style.display = 'none';
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
 		currentSection = null;
 	}
 }, {
-	time: 39.35,
 	keyframe: 'img/keyframe-scene2.jpg',
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
@@ -85,17 +122,19 @@ sectionsMap.add({
 		attack.style.display = 'block';
 		currentSection = section;
 	},
-	onDeactivate: function(section) {
-		console.log('section with id: "' + section.id + '" is deactivated');
+	onComplete: function(section) {
+		console.log('section with id: "' + section.id + '" is completed');
 
 		hideControls();
 
 		attack.disabled = true;
 		attack.style.display = 'none';
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
 		currentSection = null;
 	}
 }, {
-	time: 50.8,
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
@@ -106,17 +145,19 @@ sectionsMap.add({
 		attack.style.display = 'block';
 		currentSection = section;
 	},
-	onDeactivate: function(section) {
-		console.log('section with id: "' + section.id + '" is deactivated');
+	onComplete: function(section) {
+		console.log('section with id: "' + section.id + '" is completed');
 
 		hideControls();
 
 		attack.disabled = true;
 		attack.style.display = 'none';
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
 		currentSection = null;
 	}
 }, {
-	time: 118.5,
 	onActivate: function(section) {
 		console.log('section with id: "' + section.id + '" is activated');
 
@@ -127,28 +168,23 @@ sectionsMap.add({
 		attack.style.display = 'block';
 		currentSection = section;
 	},
-	onDeactivate: function(section) {
-		console.log('section with id: "' + section.id + '" is deactivated');
+	onComplete: function(section) {
+		console.log('section with id: "' + section.id + '" is completed');
 
 		hideControls();
 
 		attack.disabled = true;
 		attack.style.display = 'none';
+	},
+	onDeactivate: function(section) {
+		console.log('section with id: "' + section.id + '" is deactivated');
 		currentSection = null;
-	}
-});
-
-video.addEventListener('progress', function() {
-	if (!videoIsLoaded && video.buffered.length === 1) {
-		videoIsLoaded = true;
-		play.disabled = false;
-		loading.style.display = 'none';
 	}
 });
 
 play.addEventListener('click', function() {
 	if (!play.disabled) {
-		video.play();
+		sectionsMap.start();
 	}
 });
 
