@@ -4,22 +4,25 @@ var fs = require('fs'),
 			options: {
 				sections: [{
 					name: 'section0',
-					time: [0, 16]
+					time: [0, 15.8]
 				}, {
 					name: 'section1',
-					time: [16, 38],
-					sequence: [16, 17]
+					time: [15.8, 39.35],
+					sequence: [15.8, 17]
 				}, {
 					name: 'section2',
-					time: [38, 50]
+					time: [39.35, 50.8],
+					skip: true
 				}, {
 					name: 'section3',
-					time: [50, 117]
+					time: [50.8, 118.5],
+					skip: true
 				}, {
 					name: 'section4',
-					time: 117
+					time: 118.5,
+					skip: true
 				}],
-				emptyDestBeforeStart: true
+				emptyDestBeforeStart: false
 			},
 			video: {
 				src: 'videos/video.mp4',

@@ -19,6 +19,9 @@
  * 					name: 'section1',
  * 					time: [19, 30],
  * 					codecs: 'mp4'
+ * 				}, {
+ * 					name: 'section2',
+ * 					time: 56
  * 				}
  * 			]
  * 		},
@@ -41,18 +44,25 @@ module.exports = function(grunt) {
 			emptyDestBeforeStart: false,
 			encodes: {
 				webm: {
-					'-vcodec': 'libvpx',
-					'-acodec': 'libvorbis',
-					'-crf': '12',
-					'-q:a': '100',
+					'-c:v': 'libvpx',
+					'-qmin': '0',
+					'-qmax': '50',
+					'-crf': '10',
+					'-b:v': '2M',
+					'-c:a': 'libvorbis',
+					'-q:a': '4',
 					'-threads': '0'
 				},
 				mp4: {
+					'-strict': 'experimental',
+					'-f': 'mp4',
 					'-vcodec': 'libx264',
-					'-acodec': 'libfaac',
-					'-pix_fmt': 'yuv420p',
-					'-q:v': '4',
-					'-q:a': '100',
+					'-acodec': 'aac',
+					'-ab': '160000',
+					'-ac': '2',
+					'-preset': 'slow',
+					'-profile': 'main',
+					'-crf': '22',
 					'-threads': '0'
 				}
 			}
@@ -63,7 +73,8 @@ module.exports = function(grunt) {
 			files = this.files,
 			done = this.async(),
 			deletedDest = {},
-			queue = [];
+			queue = [],
+			processingCount = 0;
 
 		function addToQueue(encodeFlags, params) {
 			var ffmpegParams = ['-i', params.srcPath];
@@ -88,13 +99,20 @@ module.exports = function(grunt) {
 			}
 
 			queue.push(function(callback) {
+				var timer = setInterval(function() {
+						grunt.log.write('.');
+					}, 1000);
+
 				grunt.verbose.writeln('ffmpeg ' + ffmpegParams.join(' '));
+				grunt.log.write('Converting: ' + (params.log || params.outhPath));
 
 				ffmpeg.exec(ffmpegParams, function() {
 					if (typeof params.preprocess === 'function') {
 						params.preprocess(params);
 					}
-					grunt.log.ok('video_slicer: ' + (params.log || (params.outhPath + params.outhFile)));
+					timer && clearInterval(timer);
+					grunt.log.write('OK'.yellow + ' (' + (++processingCount) + '/' + queue.length + ')');
+					grunt.log.writeln('');
 					return callback();
 				});
 			});
@@ -115,12 +133,17 @@ module.exports = function(grunt) {
 						name: '',
 						time: [],
 						sequence: [],
-						codecs: _.keys(defaults.encodes)
+						codecs: _.keys(defaults.encodes),
+						skip: false
 					}),
 					srcPath = f.src[0],
 					dstPath = f.dest,
 					hasTimeRange,
 					hasSectionSequence;
+
+				if (section.skip) {
+					return grunt.log.writeln('Skipping: ' + section.name);
+				}
 
 				if (_.isArray(section.time)) {
 					switch(section.time.length) {
@@ -189,7 +212,8 @@ module.exports = function(grunt) {
 						dstPath: outPath,
 						sequencePath: dstPath,
 						outhPath: outPath + '/%d.jpg',
-						log: section.name + ' sequence [' + section.sequence.join(', ') + '] -> ' + outPath + '.json',
+						log: srcPath + '#sequence=' + section.sequence.join(',') + ' -> ' + outPath + '.json',
+						// log: section.name + ' sequence [' + section.sequence.join(', ') + '] -> ' + outPath + '.json',
 						preprocess: function(params) {
 							var result = {
 									frames: []
