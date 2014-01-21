@@ -32,7 +32,8 @@
  * }
  */
 
-var util = require('util'),
+var fs = require('fs'),
+	util = require('util'),
 	mime = require('mime'),
 	async = require('async'),
 	_ = require('underscore'),
@@ -213,14 +214,13 @@ module.exports = function(grunt) {
 						sequencePath: dstPath,
 						outhPath: outPath + '/%d.jpg',
 						log: srcPath + '#sequence=' + section.sequence.join(',') + ' -> ' + outPath + '.json',
-						// log: section.name + ' sequence [' + section.sequence.join(', ') + '] -> ' + outPath + '.json',
 						preprocess: function(params) {
 							var result = {
 									frames: []
 								};
 
 							grunt.file.recurse(params.sequencePath, function(abspath, rootdir, subdir, filename) {
-								result.frames[filename.split('.')[0] - 1] = util.format('data:%s;base64,%s', mime.lookup(abspath), grunt.file.read(abspath).toString('base64'))
+								result.frames[filename.split('.')[0] - 1] = util.format('data:%s;base64,%s', mime.lookup(abspath), fs.readFileSync(abspath).toString('base64'));
 							});
 							grunt.file.write(params.sequencePath + params.name + '-sequence.json', JSON.stringify(result));
 						}
