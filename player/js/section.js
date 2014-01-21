@@ -156,7 +156,7 @@ Section.prototype = {
 
 		if (this._options.sequenceFrames) {
 			$.ajax({
-				url: this._options.sequenceFrames,
+				url: [this._parent.video.baseUrl ,this._options.sequenceFrames].join('/'),
 				dataType: 'json',
 				success: function(data) {
 					if (data && data.frames) {

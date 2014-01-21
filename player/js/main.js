@@ -13,11 +13,11 @@ var video = document.getElementById('video'),
 			fps: 30,
 			baseUrl: 'sections',
 			sources: [{
-				type: 'video/mp4',
-				extension: 'mp4'
-			}, {
 				type: 'video/webm',
 				extension: 'webm'
+			}, {
+				type: 'video/mp4',
+				extension: 'mp4'
 			}]
 		},
 		onReady: function() {
@@ -77,7 +77,7 @@ sectionsMap.add({
 	}
 }, {
 	keyframe: 'img/keyframe-scene1.jpg',
-	sequenceFrames: 'videos/section1-sequence.json',
+	sequenceFrames: 'section1-sequence.json',
 	onTimeupdate: function(sectionMovie, section) {
 		if (sectionMovie.sequenceProgress) {
 			hideControls();
