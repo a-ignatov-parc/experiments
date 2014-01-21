@@ -33,7 +33,7 @@ module.exports = function(grunt) {
 	grunt.initConfig(gruntConfig);
 
 	// Загружаем кастомные таски
-	grunt.loadTasks('tasks');
+	grunt.loadNpmTasks('grunt-video-slicer');
 
 	// Регистрируем таски
 	grunt.registerTask('default', 'video_slicer');
