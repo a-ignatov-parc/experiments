@@ -11,7 +11,7 @@ var video = document.getElementById('video'),
 			width: 960,
 			height: 540,
 			fps: 30,
-			baseUrl: 'videos',
+			baseUrl: 'sections',
 			sources: [{
 				type: 'video/mp4',
 				extension: 'mp4'
