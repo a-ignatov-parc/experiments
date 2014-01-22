@@ -6,9 +6,12 @@ var fs = require('fs'),
 					name: 'section0',
 					time: [0, 15.85]
 				}, {
+					name: 'section1-sequence',
+					time: [15.85, 17],
+					codecs: 'json'
+				}, {
 					name: 'section1',
-					time: [15.85, 39.35],
-					sequence: [15.85, 17]
+					time: [17, 39.35]
 				}, {
 					name: 'section2',
 					time: [39.35, 50.8]
