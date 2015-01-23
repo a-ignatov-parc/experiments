@@ -10,35 +10,24 @@ Different experiments with technologies, libs etc.
 	1. `/easeljs` – experiment with EaselJS library
 	1. `/blur` – experiment with discovered fast bluring technique
 	1. `/videoblur` – experiment with realtime video blur using fast bluring
-1. `/player` – experiments with video playback custom cross-browser behaviour
+	1. `/jstopng` – experiment with text conversion to image and backward
 1. `/tag` – experiments with HTML tag constructor
 
 ---
 
 ## Canvas
 
-All experiments related to canvas:
+Experiments related to canvas:
 
-### easeljs
-EaselJS API experiments. Trying to understand does this lib fit our targets.
+1. **easeljs** – EaselJS API experiments. Trying to understand does this lib fit our.
 
-### blur
-Discovered very fast bluring technique that in theory can run in runtime
+1. **blur** – Discovered very fast bluring technique that in theory can run in runtime.
 
-### videoblur
-[Demo](http://a-ignatov-parc.github.io/experiments/canvas/videoblur/) showing previosly dicovered bluring technique trying to blur video in realtime
+1. **videoblur** – [Demo](http://a-ignatov-parc.github.io/experiments/canvas/videoblur/) showing previosly dicovered bluring technique trying to blur video in realtime.
 
-![Text on blurred video part](https://cloudup.com/cesy6HULb8v+)
+	![Text on blurred video part](https://cloudup.com/cesy6HULb8v+)
 
-
-## Player
-Trying to achive custom behavour with video playback
-
-1. Smooth forward and backward playback
-1. Correct HFP (High Frame Playback) video playback and playback rate changing
-1. Video tagging
-
-A little [demo](http://a-ignatov-parc.github.io/experiments/player/)
+1. **jstopng** – [Demo](http://a-ignatov-parc.github.io/experiments/canvas/jstopng/) showing how text can be converted to `png` image. With ability to restore text from previously generated image.
 
 
 ## Tag
